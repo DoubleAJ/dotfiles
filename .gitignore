@@ -1,0 +1,12 @@
+# Ignore everything by default...
+*
+
+# except for the following dirs and dotfiles:
+!README.md
+!.gitignore
+!.zshrc
+!.config/
+!.config/alacritty/
+!.config/alacritty/*
+
+
