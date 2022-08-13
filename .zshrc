@@ -39,3 +39,9 @@ alias -s txt=neovim
 alias -s c=neovim
 alias -s cpp=neovim
 alias -s rs=neovim
+
+# Created by `pipx`
+export PATH="$PATH:/home/alex/.local/bin"
+
+eval "$(register-python-argcomplete pipx)"
+. "$HOME/.cargo/env"
