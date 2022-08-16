@@ -40,6 +40,7 @@ alias -s c=neovim
 alias -s cpp=neovim
 alias -s rs=neovim
 
+
 # Created by `pipx`
 export PATH="$PATH:/home/alex/.local/bin"
 
@@ -48,7 +49,7 @@ export PATH="$PATH:/home/alex/.local/bin"
 HISTFILE=~/.histfile
 HISTSIZE=1000
 SAVEHIST=1000
-bindkey -v
+bindkey -e
 # End of lines configured by zsh-newuser-install
 # The following lines were added by compinstall
 zstyle :compinstall filename '/home/alex/.zshrc'
@@ -56,3 +57,9 @@ zstyle :compinstall filename '/home/alex/.zshrc'
 autoload -Uz compinit
 compinit
 # End of lines added by compinstall
+
+# Key bindings (in order to find key codes, type ctrl+v and press keys)
+bindkey "^[[H" beginning-of-line
+bindkey "^[[F" end-of-line
+bindkey "^[[1;5C" forward-word
+bindkey "^[[1;5D" backward-word
