@@ -8,5 +8,6 @@
 !.config/
 !.config/alacritty/
 !.config/alacritty/*
-
+!.config/lvim/
+!.config/lvim/config.lua
 
