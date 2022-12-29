@@ -40,6 +40,6 @@ To activate other plugins, add line to **\~/.zshrc** e.g.:
 
 ### NeoVim
 
-Checkout this forked configuration (and read the setup instructions) in *\~/.config/nvim* :
+For now I am using the LunarVim configuration for NeoVim (see https://www.lunarvim.org/).
 
-<https://github.com/DoubleAJ/neovim-config>
+*.config/lvim/config.lua* contains some personal settings, like a couple more key bindings, and Rust configuration.
