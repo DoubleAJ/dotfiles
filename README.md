@@ -43,3 +43,7 @@ To activate other plugins, add line to **\~/.zshrc** e.g.:
 For now I am using the LunarVim configuration for NeoVim (see https://www.lunarvim.org/).
 
 *.config/lvim/config.lua* contains some personal settings, like a couple more key bindings, and Rust configuration.
+
+### Window Manager
+
+**i3**, with **Rofi** launcher, **Polybar**, **Nitrogen** for wallpaper, **Picom** as compositor.
