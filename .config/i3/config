@@ -78,8 +78,6 @@ bindcode --release 133 exec --no-startup-id "pkill rofi || rofi -modi drun,run -
 # .desktop file. It is a wrapper around dmenu, so you need that installed.
 # bindcode $mod+40 exec --no-startup-id i3-dmenu-desktop
 
-bindsym $mod+Shift+Ctrl+l exec --no-startup-id i3lock -i ~/Pictures/wallpapers/screen-lock-1080p.png
-
 # change focus
 bindsym $mod+j focus left
 bindsym $mod+k focus down
@@ -173,6 +171,17 @@ bindsym $mod+Shift+c reload
 bindsym $mod+Shift+r restart
 # exit i3 (logs you out of your X session)
 bindsym $mod+Shift+e exec "i3-nagbar -t warning -m 'You pressed the exit shortcut. Do you really want to exit i3? This will end your X session.' -B 'Yes, exit i3' 'i3-msg exit'"
+# Lock screen
+bindsym $mod+Shift+Ctrl+l exec --no-startup-id i3lock -i ~/Pictures/wallpapers/screen-lock-1080p.png
+# Shutdown
+bindsym $mod+Shift+Ctrl+Pause exec --no-startup-id "systemctl poweroff -i"
+# Reboot
+bindsym $mod+Shift+Ctrl+r exec --no-startup-id "systemctl reboot -i"
+# Hybernate unfortunately doesn't work
+# bindsym $mod+Shift+Ctrl+h exec --no-startup-id "systemctl hibernate -i"
+# Suspend
+bindsym $mod+Shift+Ctrl+s exec --no-startup-id "systemctl suspend -i"
+
 
 # resize window (you can also use the mouse for that)
 mode "resize" {
@@ -209,3 +218,4 @@ exec_always --no-startup-id $HOME/.config/polybar/launch.sh
 #         position top
 #         status_command i3status
 # }
+
