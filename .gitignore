@@ -5,6 +5,7 @@
 !README.md
 !.gitignore
 !.zshrc
+!.xprofile
 !.config/
 !.config/alacritty/
 !.config/alacritty/*
