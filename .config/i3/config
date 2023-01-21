@@ -174,7 +174,8 @@ bindsym $mod+Shift+e exec "i3-nagbar -t warning -m 'You pressed the exit shortcu
 # Lock screen
 bindsym $mod+Shift+Ctrl+l exec --no-startup-id i3lock -i ~/Pictures/wallpapers/screen-lock-1080p.png
 # Shutdown
-bindsym $mod+Shift+Ctrl+Pause exec --no-startup-id "systemctl poweroff -i"
+# bindsym $mod+Shift+Ctrl+Pause exec --no-startup-id "systemctl poweroff -i"
+bindcode $mod+Shift+Ctrl+127 exec --no-startup-id "systemctl poweroff -i"
 # Reboot
 bindsym $mod+Shift+Ctrl+r exec --no-startup-id "systemctl reboot -i"
 # Hybernate unfortunately doesn't work
