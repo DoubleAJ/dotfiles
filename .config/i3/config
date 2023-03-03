@@ -20,7 +20,7 @@ set $mod Mod4
 font pango:DejaVu Sans Mono 8
 
 # Auto activate 'num lock' (requires numlockx package installed)
-exec numlockx on
+exec --no-startup-id numlockx on
 
 # Start XDG autostart .desktop files using dex. See also
 # https://wiki.archlinux.org/index.php/XDG_Autostart
