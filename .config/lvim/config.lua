@@ -33,6 +33,7 @@ lvim.keys.normal_mode["<F10>"] = ":lua require('dap').step_over()<CR>"
 lvim.keys.normal_mode["<F11>"] = ":lua require('dap').step_into()<CR>"
 lvim.keys.normal_mode["<F12>"] = ":lua require('dap').step_out()<CR>"
 lvim.keys.normal_mode["<F6>"] = ":lua require('dap.ui.widgets').hover()<CR>"
+lvim.keys.normal_mode["<Leader>dT"] = ":lua require('dap').set_breakpoint(vim.fn.input('Breakpoint condition: '))<CR>"
 -- The following don't work...
 -- lvim.keys.normal_mode["<F7>"] = ":lua require('dap.ui.variables').hover()<CR>"
 -- lvim.keys.normal_mode["<F8>"] = ":lua require('dap.ui.variables').visual_hover()<CR>"
