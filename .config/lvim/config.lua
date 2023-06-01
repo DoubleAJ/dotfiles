@@ -12,6 +12,7 @@ an executable
 lvim.log.level = "warn"
 lvim.format_on_save.enabled = false
 lvim.colorscheme = "lunar"
+-- lvim.colorscheme = "gruvbox"
 -- to disable icons and use a minimalist setup, uncomment the following
 -- lvim.use_icons = false
 
@@ -25,8 +26,16 @@ lvim.keys.insert_mode = {
 lvim.leader = "space"
 -- add your own keymapping
 lvim.keys.normal_mode["<C-s>"] = ":w<cr>"
+-- lvim.keys.normal_mode["<C-S>"] = ":wa<cr>" ---> This does NOT work because the program interprets uppercase and lowercase as the same for some reason...
 lvim.keys.normal_mode["<S-l>"] = ":BufferLineCycleNext<CR>"
 lvim.keys.normal_mode["<S-h>"] = ":BufferLineCyclePrev<CR>"
+lvim.keys.normal_mode["<Tab>"] = ":BufferLineCycleNext<CR>"
+lvim.keys.normal_mode["<S-Tab>"] = ":BufferLineCyclePrev<CR>"
+-- better paste:
+lvim.keys.normal_mode["<Leader>p"] = "\"0p"
+lvim.keys.normal_mode["<Leader>P"] = "\"0P"
+lvim.keys.visual_mode["<Leader>p"] = "\"0p"
+--
 -- Debugging
 lvim.keys.normal_mode["<F5>"] = ":lua require('dap').continue()<CR>"
 lvim.keys.normal_mode["<F10>"] = ":lua require('dap').step_over()<CR>"
@@ -89,6 +98,8 @@ lvim.builtin.nvimtree.setup.renderer.icons.show.git = false
 lvim.builtin.treesitter.ensure_installed = {
   "bash",
   "c",
+  "cpp",
+  "cmake",
   "javascript",
   "json",
   "lua",
@@ -107,11 +118,15 @@ lvim.builtin.treesitter.highlight.enable = true
 
 -- generic LSP settings
 
--- -- make sure server will always be installed even if the server is in skipped_servers list
--- lvim.lsp.installer.setup.ensure_installed = {
---     "sumneko_lua",
---     "jsonls",
--- }
+-- make sure server will always be installed even if the server is in skipped_servers list
+lvim.lsp.installer.setup.ensure_installed = {
+    -- "sumneko_lua",
+    "jsonls",
+    "clangd",
+    "pyright",
+    "rust_analyzer",
+    "lua_ls",
+}
 -- -- change UI setting of `LspInstallInfo`
 -- -- see <https://github.com/williamboman/nvim-lsp-installer#default-configuration>
 -- lvim.lsp.installer.setup.ui.check_outdated_servers_on_open = false
@@ -146,6 +161,18 @@ vim.list_extend(lvim.lsp.automatic_configuration.skipped_servers, { "rust_analyz
 --   --Enable completion triggered by <c-x><c-o>
 --   buf_set_option("omnifunc", "v:lua.vim.lsp.omnifunc")
 -- end
+
+-- Personal configuration for LSP servers
+-- clangd (C/C++)
+-- Keymap to switch between source and header
+local on_clangd_attach = function()
+  vim.api.nvim_set_keymap("n", "<Leader>lh", "<cmd>:ClangdSwitchSourceHeader<Cr>", { noremap = true, silent = true })
+end
+
+local lspconfig = require('lspconfig')
+lspconfig.clangd.setup {
+  on_attach = on_clangd_attach
+}
 
 -- -- set a formatter, this will override the language server formatting capabilities (if it exists)
 local formatters = require "lvim.lsp.null-ls.formatters"
@@ -299,8 +326,8 @@ lvim.plugins = {
   "simrat39/rust-tools.nvim",
   {
     "saecki/crates.nvim",
-    tag = "v0.3.0",
-    requires = { "nvim-lua/plenary.nvim" },
+    version = "v0.3.0",
+    dependencies = { "nvim-lua/plenary.nvim" },
     config = function()
       require("crates").setup {
         null_ls = {
@@ -325,8 +352,8 @@ lvim.plugins = {
 --     },
   {
     "theHamsta/nvim-dap-virtual-text",
-    requires = {
-      "mfusseneger/nvim-dap",
+    dependencies = {
+      -- "mfusseneger/nvim-dap",
       "nvim-treesitter/nvim-treesitter",
     },
     config = function()

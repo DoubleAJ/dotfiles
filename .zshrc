@@ -23,6 +23,8 @@ alias vi="lvim" # Keep this in command line since it is used by git.
 alias c="clear"
 alias ls="ls --color=auto"
 alias grep="grep --color=auto"
+alias sudo='doas'
+alias sudoedit='doas lvim'
 
 # Safety aliases
 # do not delete / or prompt if deleting more than 3 files at a time #
@@ -66,3 +68,19 @@ bindkey "^[[F" end-of-line
 bindkey "^[[1;5C" forward-word
 bindkey "^[[1;5D" backward-word
 bindkey "^[[3~" delete-char
+
+# >>> conda initialize >>>
+# !! Contents within this block are managed by 'conda init' !!
+__conda_setup="$('/home/alex/miniconda3/bin/conda' 'shell.zsh' 'hook' 2> /dev/null)"
+if [ $? -eq 0 ]; then
+    eval "$__conda_setup"
+else
+    if [ -f "/home/alex/miniconda3/etc/profile.d/conda.sh" ]; then
+        . "/home/alex/miniconda3/etc/profile.d/conda.sh"
+    else
+        export PATH="/home/alex/miniconda3/bin:$PATH"
+    fi
+fi
+unset __conda_setup
+# <<< conda initialize <<<
+
