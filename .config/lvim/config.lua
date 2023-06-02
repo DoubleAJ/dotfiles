@@ -11,8 +11,8 @@ an executable
 -- general
 lvim.log.level = "warn"
 lvim.format_on_save.enabled = false
-lvim.colorscheme = "lunar"
--- lvim.colorscheme = "gruvbox"
+-- lvim.colorscheme = "lunar"
+lvim.colorscheme = "gruvbox"
 -- to disable icons and use a minimalist setup, uncomment the following
 -- lvim.use_icons = false
 
@@ -162,18 +162,6 @@ vim.list_extend(lvim.lsp.automatic_configuration.skipped_servers, { "rust_analyz
 --   buf_set_option("omnifunc", "v:lua.vim.lsp.omnifunc")
 -- end
 
--- Personal configuration for LSP servers
--- clangd (C/C++)
--- Keymap to switch between source and header
-local on_clangd_attach = function()
-  vim.api.nvim_set_keymap("n", "<Leader>lh", "<cmd>:ClangdSwitchSourceHeader<Cr>", { noremap = true, silent = true })
-end
-
-local lspconfig = require('lspconfig')
-lspconfig.clangd.setup {
-  on_attach = on_clangd_attach
-}
-
 -- -- set a formatter, this will override the language server formatting capabilities (if it exists)
 local formatters = require "lvim.lsp.null-ls.formatters"
 formatters.setup {
@@ -209,18 +197,73 @@ formatters.setup {
 --   },
 -- }
 
+
+
 -- Dap adapter configuations
--- For Rust:
+require("mason-nvim-dap").setup({
+    ensure_installed = { "codelldb" }
+})
+
+-- For debugging C/C++/Rust (codelldb):
+local dap_ok, dap = pcall(require, "dap")
+  if not (dap_ok) then
+    print("nvim-dap not installed!")
+  return
+end
+
 local mason_path = vim.fn.glob(vim.fn.stdpath "data" .. "/mason/")
+
+-- dap.adapters.codelldb = {
 local codelldb_adapter = {
+  name = "codelldb",
   type = "server",
   port = "${port}",
   executable = {
-    command = mason_path .. "bin/codelldb",
+    command = mason_path .. "packages/codelldb/extension/codelldb/bin/lldb",
     args = { "--port", "${port}" },
     -- On windows you may have to uncomment this:
     -- detached = false,
   },
+}
+
+local dap_config_codelldb = {
+  {
+    name = "Launch codelldb 4 C/C++/Rust",
+    type = "codelldb", -- matches the adapter
+    request = "launch", -- could also attach to a currently running process
+    program = function()
+      return vim.fn.input(
+        "Path to executable: ",
+        vim.fn.getcwd() .. "/",
+        "file"
+      )
+    end,
+    cwd = "${workspaceFolder}",
+    stopOnEntry = false,
+    args = {},
+    runInTerminal = false,
+  },
+}
+
+local function dap_setup()
+  local dap_local = require('dap')
+  dap_local.adapters.codelldb = codelldb_adapter
+  dap_local.configurations.rust = dap_config_codelldb
+  dap_local.configurations.c = dap_config_codelldb
+  dap_local.configurations.cpp = dap_config_codelldb
+end
+
+-- Configuration for LSP servers
+-- clangd (C/C++)
+-- Keymap to switch between source and header
+local on_clangd_attach = function()
+  vim.api.nvim_set_keymap("n", "<Leader>lh", "<cmd>:ClangdSwitchSourceHeader<Cr>", { noremap = true, silent = true })
+  dap_setup()
+end
+
+local lspconfig = require('lspconfig')
+lspconfig.clangd.setup {
+  on_attach = on_clangd_attach,
 }
 
 pcall(function()
@@ -261,6 +304,7 @@ pcall(function()
     server = {
       on_attach = function(client, bufnr)
         require("lvim.lsp").common_on_attach(client, bufnr)
+        dap_setup()
         local rt = require "rust-tools"
         vim.keymap.set("n", "K", rt.hover_actions.hover_actions, { buffer = bufnr })
       end,
@@ -280,22 +324,6 @@ pcall(function()
     },
   }
 end)
-
-lvim.builtin.dap.on_config_done = function(dap)
-  dap.adapters.codelldb = codelldb_adapter
-  dap.configurations.rust = {
-    {
-      name = "Launch file",
-      type = "codelldb",
-      request = "launch",
-      program = function()
-        return vim.fn.input("Path to executable: ", vim.fn.getcwd() .. "/", "file")
-      end,
-      cwd = "${workspaceFolder}",
-      stopOnEntry = false,
-    },
-  }
-end
 
 vim.api.nvim_set_keymap("n", "<m-d>", "<cmd>RustOpenExternalDocs<Cr>", { noremap = true, silent = true })
 
@@ -323,6 +351,10 @@ lvim.builtin.which_key.mappings["C"] = {
 
 -- Additional Plugins
 lvim.plugins = {
+  {"morhetz/gruvbox"},
+  {"sainnhe/gruvbox-material"},
+  {"sainnhe/everforest"},
+  {"jay-babu/mason-nvim-dap.nvim"},
   "simrat39/rust-tools.nvim",
   {
     "saecki/crates.nvim",
