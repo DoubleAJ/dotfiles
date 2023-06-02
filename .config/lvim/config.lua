@@ -197,8 +197,6 @@ formatters.setup {
 --   },
 -- }
 
-
-
 -- Dap adapter configuations
 require("mason-nvim-dap").setup({
     ensure_installed = { "codelldb" }
@@ -213,13 +211,12 @@ end
 
 local mason_path = vim.fn.glob(vim.fn.stdpath "data" .. "/mason/")
 
--- dap.adapters.codelldb = {
 local codelldb_adapter = {
   name = "codelldb",
   type = "server",
   port = "${port}",
   executable = {
-    command = mason_path .. "packages/codelldb/extension/codelldb/bin/lldb",
+    command = mason_path .. "bin/codelldb",
     args = { "--port", "${port}" },
     -- On windows you may have to uncomment this:
     -- detached = false,
