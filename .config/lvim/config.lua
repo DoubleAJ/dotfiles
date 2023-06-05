@@ -166,7 +166,7 @@ vim.list_extend(lvim.lsp.automatic_configuration.skipped_servers, { "rust_analyz
 local formatters = require "lvim.lsp.null-ls.formatters"
 formatters.setup {
   { command = "stylua", filetypes = { "lua" } },
---   { command = "black", filetypes = { "python" } },
+  { command = "black", filetypes = { "python" } },
 --   { command = "isort", filetypes = { "python" } },
 --   {
 --     -- each formatter accepts a list of options identical to https://github.com/jose-elias-alvarez/null-ls.nvim/blob/main/doc/BUILTINS.md#Configuration
@@ -180,9 +180,9 @@ formatters.setup {
 }
 
 -- -- set additional linters
--- local linters = require "lvim.lsp.null-ls.linters"
--- linters.setup {
---   { command = "flake8", filetypes = { "python" } },
+local linters = require "lvim.lsp.null-ls.linters"
+linters.setup {
+  { command = "flake8", filetypes = { "python" } },
 --   {
 --     -- each linter accepts a list of options identical to https://github.com/jose-elias-alvarez/null-ls.nvim/blob/main/doc/BUILTINS.md#Configuration
 --     command = "shellcheck",
@@ -195,11 +195,14 @@ formatters.setup {
 --     ---@usage specify which filetypes to enable. By default a providers will attach to all the filetypes it supports.
 --     filetypes = { "javascript", "python" },
 --   },
--- }
+}
 
 -- Dap adapter configuations
 require("mason-nvim-dap").setup({
-    ensure_installed = { "codelldb" }
+    ensure_installed = {
+      "codelldb",
+      "debugpy",
+    }
 })
 
 -- For debugging C/C++/Rust (codelldb):
@@ -211,6 +214,13 @@ end
 
 local mason_path = vim.fn.glob(vim.fn.stdpath "data" .. "/mason/")
 
+-- debugpy for debugging Python
+lvim.builtin.dap.active = true -- What does this do???
+pcall(function()
+  require("dap-python").setup(mason_path .. "packages/debugpy/venv/bin/python")
+end)
+
+-- codelldb allows debugging C/C++/Rust
 local codelldb_adapter = {
   name = "codelldb",
   type = "server",
@@ -242,7 +252,7 @@ local dap_config_codelldb = {
   },
 }
 
-local function dap_setup()
+local function lldb_dap_configs_setup()
   local dap_local = require('dap')
   dap_local.adapters.codelldb = codelldb_adapter
   dap_local.configurations.rust = dap_config_codelldb
@@ -251,16 +261,102 @@ local function dap_setup()
 end
 
 -- Configuration for LSP servers
+
+-- pyright (Python)
+local on_pyright_attach = function ()
+  -- Testing
+  --
+  require("neotest").setup({
+    adapters = {
+      require("neotest-python")({
+        -- Extra arguments for nvim-dap configuration
+        -- See https://github.com/microsoft/debugpy/wiki/Debug-configuration-settings for values
+        dap = {
+          justMyCode = false,
+          console = "integratedTerminal",
+        },
+        args = { "--log-level", "DEBUG", "--quiet" },
+        runner = "pytest",
+      })
+    }
+  })
+
+  -- we use protected-mode (pcall) just in case the plugin wasn't loaded yet.
+  local wk_ok, which_key_plugin = pcall(require, "which-key")
+    if not (wk_ok) then
+      print("Which Key not installed!")
+    return
+  end
+
+  which_key_plugin.register({
+    C = {
+      name = "Python", -- optional group name
+      c = { "<cmd>lua require('swenv.api').pick_venv()<cr>", "Choose Env" }, -- binding for switching venv
+    },
+    d = {
+      m = {
+        "<cmd>lua require('neotest').run.run()<cr>",
+        "Test Method"
+      },
+      M = {
+        "<cmd>lua require('neotest').run.run({strategy = 'dap'})<cr>",
+        "Test Method DAP"
+      },
+      f = {
+        "<cmd>lua require('neotest').run.run({vim.fn.expand('%')})<cr>",
+        "Test Class"
+      },
+      F = {
+        "<cmd>lua require('neotest').run.run({vim.fn.expand('%'), strategy = 'dap'})<cr>",
+        "Test Class DAP"
+      },
+      S = {
+        "<cmd>lua require('neotest').summary.toggle()<cr>",
+        "Test Summary"
+      },
+    },
+  }, { prefix = "<leader>" })
+end
+
 -- clangd (C/C++)
--- Keymap to switch between source and header
 local on_clangd_attach = function()
+  -- Keymap to switch between source and header
   vim.api.nvim_set_keymap("n", "<Leader>lh", "<cmd>:ClangdSwitchSourceHeader<Cr>", { noremap = true, silent = true })
-  dap_setup()
+  lldb_dap_configs_setup()
+end
+
+local on_rust_analyzer_attach = function ()
+  lldb_dap_configs_setup()
+  vim.api.nvim_set_keymap("n", "<m-d>", "<cmd>RustOpenExternalDocs<Cr>", { noremap = true, silent = true })
+
+  lvim.builtin.which_key.mappings["C"] = {
+    name = "Rust",
+    r = { "<cmd>RustRunnables<Cr>", "Runnables" },
+    t = { "<cmd>lua _CARGO_TEST()<cr>", "Cargo Test" },
+    m = { "<cmd>RustExpandMacro<Cr>", "Expand Macro" },
+    c = { "<cmd>RustOpenCargo<Cr>", "Open Cargo" },
+    p = { "<cmd>RustParentModule<Cr>", "Parent Module" },
+    d = { "<cmd>RustDebuggables<Cr>", "Debuggables" },
+    v = { "<cmd>RustViewCrateGraph<Cr>", "View Crate Graph" },
+    R = {
+      "<cmd>lua require('rust-tools/workspace_refresh')._reload_workspace_from_cargo_toml()<Cr>",
+      "Reload Workspace",
+    },
+    o = { "<cmd>RustOpenExternalDocs<Cr>", "Open External Docs" },
+    y = { "<cmd>lua require'crates'.open_repository()<cr>", "[crates] open repository" },
+    P = { "<cmd>lua require'crates'.show_popup()<cr>", "[crates] show popup" },
+    i = { "<cmd>lua require'crates'.show_crate_popup()<cr>", "[crates] show info" },
+    f = { "<cmd>lua require'crates'.show_features_popup()<cr>", "[crates] show features" },
+    D = { "<cmd>lua require'crates'.show_dependencies_popup()<cr>", "[crates] show dependencies" },
+  }
 end
 
 local lspconfig = require('lspconfig')
 lspconfig.clangd.setup {
   on_attach = on_clangd_attach,
+}
+lspconfig.pyright.setup {
+  on_attach = on_pyright_attach,
 }
 
 pcall(function()
@@ -301,7 +397,7 @@ pcall(function()
     server = {
       on_attach = function(client, bufnr)
         require("lvim.lsp").common_on_attach(client, bufnr)
-        dap_setup()
+        on_rust_analyzer_attach()
         local rt = require "rust-tools"
         vim.keymap.set("n", "K", rt.hover_actions.hover_actions, { buffer = bufnr })
       end,
@@ -322,36 +418,24 @@ pcall(function()
   }
 end)
 
-vim.api.nvim_set_keymap("n", "<m-d>", "<cmd>RustOpenExternalDocs<Cr>", { noremap = true, silent = true })
-
-lvim.builtin.which_key.mappings["C"] = {
-  name = "Rust",
-  r = { "<cmd>RustRunnables<Cr>", "Runnables" },
-  t = { "<cmd>lua _CARGO_TEST()<cr>", "Cargo Test" },
-  m = { "<cmd>RustExpandMacro<Cr>", "Expand Macro" },
-  c = { "<cmd>RustOpenCargo<Cr>", "Open Cargo" },
-  p = { "<cmd>RustParentModule<Cr>", "Parent Module" },
-  d = { "<cmd>RustDebuggables<Cr>", "Debuggables" },
-  v = { "<cmd>RustViewCrateGraph<Cr>", "View Crate Graph" },
-  R = {
-    "<cmd>lua require('rust-tools/workspace_refresh')._reload_workspace_from_cargo_toml()<Cr>",
-    "Reload Workspace",
-  },
-  o = { "<cmd>RustOpenExternalDocs<Cr>", "Open External Docs" },
-  y = { "<cmd>lua require'crates'.open_repository()<cr>", "[crates] open repository" },
-  P = { "<cmd>lua require'crates'.show_popup()<cr>", "[crates] show popup" },
-  i = { "<cmd>lua require'crates'.show_crate_popup()<cr>", "[crates] show info" },
-  f = { "<cmd>lua require'crates'.show_features_popup()<cr>", "[crates] show features" },
-  D = { "<cmd>lua require'crates'.show_dependencies_popup()<cr>", "[crates] show dependencies" },
-}
-
-
 -- Additional Plugins
 lvim.plugins = {
+  -- Themes
   {"morhetz/gruvbox"},
   {"sainnhe/gruvbox-material"},
   {"sainnhe/everforest"},
-  {"jay-babu/mason-nvim-dap.nvim"},
+  {"NLKNguyen/papercolor-theme"},
+  {
+    "j-hui/fidget.nvim",
+    config = function()
+      require("fidget").setup()
+    end,
+  },
+--     {
+--       "folke/trouble.nvim",
+--       cmd = "TroubleToggle",
+--     },
+  -- Rust
   "simrat39/rust-tools.nvim",
   {
     "saecki/crates.nvim",
@@ -369,16 +453,8 @@ lvim.plugins = {
       }
     end,
   },
-  {
-    "j-hui/fidget.nvim",
-    config = function()
-      require("fidget").setup()
-    end,
-  },
---     {
---       "folke/trouble.nvim",
---       cmd = "TroubleToggle",
---     },
+  -- Debugging
+  {"jay-babu/mason-nvim-dap.nvim"},
   {
     "theHamsta/nvim-dap-virtual-text",
     dependencies = {
@@ -414,6 +490,12 @@ lvim.plugins = {
       }
     end,
   },
+  -- Python venv switcher
+  {"ChristianChiarulli/swenv.nvim"},
+  -- Debugging Python
+  {"mfussenegger/nvim-dap-python"},
+  {"nvim-neotest/neotest"},
+  {"nvim-neotest/neotest-python"},
 }
 
 -- Autocommands (https://neovim.io/doc/user/autocmd.html)
