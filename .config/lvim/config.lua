@@ -88,6 +88,8 @@ lvim.plugins = {
   {"nvim-neotest/neotest-python"},
 }
 
+require("clangd_extensions_config").config()
+
 -- general
 lvim.log.level = "warn"
 lvim.format_on_save.enabled = false
@@ -441,9 +443,6 @@ local on_rust_analyzer_attach = function ()
 end
 
 local lspconfig = require('lspconfig')
-lspconfig.clangd.setup {
-  on_attach = on_clangd_attach,
-}
 lspconfig.pyright.setup {
   on_attach = on_pyright_attach,
 }

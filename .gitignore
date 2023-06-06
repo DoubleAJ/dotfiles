@@ -11,6 +11,8 @@
 !.config/alacritty/*
 !.config/lvim/
 !.config/lvim/config.lua
+!.config/lvim/lua
+!.config/lvim/lua/*
 !.config/i3
 !.config/i3/*
 !.config/picom
