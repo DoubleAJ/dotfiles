@@ -1,7 +1,11 @@
 # Personal Dotfiles
 
-This repo can be checked out directly in the home directory.
-
+This repo can be checked out directly in the home directory, by doing the following:
+```
+git init .
+git remote add -t \* -f origin https://github.com/DoubleAJ/dotfiles.git
+git checkout main
+```
 ### Terminal Emulator - Alacritty
 
 Goes in **\~/.config/alacritty/alacritty.yml**
