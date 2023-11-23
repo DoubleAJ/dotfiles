@@ -58,6 +58,7 @@ local on_clangd_attach = function()
   vim.keymap.set('n', 'gD', vim.lsp.buf.declaration)
   vim.keymap.set('n', 'gd', vim.lsp.buf.definition)
   vim.keymap.set('n', 'gi', vim.lsp.buf.implementation)
+  vim.keymap.set('n', 'gr', vim.lsp.buf.references)
   lldb_dap_configs_setup()
 end
 

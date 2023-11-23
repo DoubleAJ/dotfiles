@@ -400,22 +400,6 @@ local on_pyright_attach = function ()
   }, { prefix = "<leader>" })
 end
 
--- clangd (C/C++)
-local on_clangd_attach = function()
-  -- Keymap to switch between source and header
-  vim.api.nvim_set_keymap("n", "<Leader>lh", "<cmd>:ClangdSwitchSourceHeader<Cr>", { noremap = true, silent = true })
-  -- If the 'go to definition' command does not work, it is probably because
-  -- 'compile_commands.json' must be generated in the project root directory
-  -- (see https://clang.llvm.org/docs/JSONCompilationDatabase.html ).
-  -- The 'bear' tool can be used to generate it. It can be installed normally via the distro repos.
-  -- In order to use it, start from a clean build, then call 'bear -- make' 
-  -- (or whatever command is used to build instead of 'make').
-  vim.keymap.set('n', 'gD', vim.lsp.buf.declaration)
-  vim.keymap.set('n', 'gd', vim.lsp.buf.definition)
-  vim.keymap.set('n', 'gi', vim.lsp.buf.implementation)
-  lldb_dap_configs_setup()
-end
-
 local on_rust_analyzer_attach = function ()
   lldb_dap_configs_setup()
   vim.api.nvim_set_keymap("n", "<m-d>", "<cmd>RustOpenExternalDocs<Cr>", { noremap = true, silent = true })
