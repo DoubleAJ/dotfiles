@@ -52,7 +52,9 @@ local on_clangd_attach = function()
   -- If the 'go to definition' command does not work, it is probably because
   -- 'compile_commands.json' must be generated in the project root directory
   -- (see https://clang.llvm.org/docs/JSONCompilationDatabase.html ).
-  -- The 'bear' tool can be used to generate it. It can be installed normally via the distro repos.
+  -- When using CMake, put the following line in CMakeLists.txt:
+  -- set(CMAKE_EXPORT_COMPILE_COMMANDS 1)
+  -- Otherwise, the 'bear' tool can be used to generate it. It can be installed normally via the distro repos.
   -- In order to use it, start from a clean build, then call 'bear -- make' 
   -- (or whatever command is used to build instead of 'make').
   vim.keymap.set('n', 'gD', vim.lsp.buf.declaration)
