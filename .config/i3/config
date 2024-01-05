@@ -44,7 +44,7 @@ exec_always --no-startup-id picom
 exec_always --no-startup-id nitrogen --restore
 
 # Autostart Steam minimized
-exec --no-startup-id steam -nochatui -nofriendsui -silent
+exec --no-startup-id steam -vgui -nochatui -nofriendsui -silent
 
 # No window title bar, but keep border
 for_window [class="^.*"] border pixel 2

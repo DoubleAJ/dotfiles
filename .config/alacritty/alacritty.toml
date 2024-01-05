@@ -1,0 +1,28 @@
+live_config_reload = true
+
+[colors]
+transparent_background_colors = true
+
+[colors.primary]
+background = "#000000"
+
+[cursor]
+blink_interval = 750
+unfocused_hollow = true
+
+[cursor.style]
+blinking = "Always"
+
+[scrolling]
+history = 10000
+
+[window]
+opacity = 1.0
+
+[window.class]
+general = "Alacritty"
+instance = "Alacritty"
+
+[window.padding]
+x = 1
+y = 1
