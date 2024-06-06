@@ -16,10 +16,7 @@ source /usr/share/zsh-theme-powerlevel10k/powerlevel10k.zsh-theme
 
 # aliases
 alias ll="ls -al"
-alias neovide="neovide --neovim-bin=/home/alex/.local/bin/lvim"
-alias vim="neovide"
-alias v="neovide"
-alias vi="lvim" # Keep this in command line since it is used by git.
+alias vi="nvim" # Keep this in command line since it is used by git.
 alias c="clear"
 alias ls="ls --color=auto"
 alias grep="grep --color=auto"
