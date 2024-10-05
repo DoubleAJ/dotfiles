@@ -19,6 +19,12 @@ set $mod mod4
 # text rendering and scalability on retina/hidpi displays (thanks to pango).
 font pango:DejaVu Sans Mono 8
 
+# Set the display mode to 100hz (and 1080p)
+# N.B.: Verify that the --output argument name is the right one: run 'xrandr' command to see the list of supported devices and modes.
+# The following command is optimal for my current home desktop PC's screen.
+exec --no-startup-id xrandr --output HDMI-0 --mode 1920x1080 --rate 100
+
+
 # Auto activate 'num lock' (requires numlockx package installed)
 exec --no-startup-id numlockx on
 
