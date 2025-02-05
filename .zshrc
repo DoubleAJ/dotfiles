@@ -41,6 +41,8 @@ alias -s c=neovim
 alias -s cpp=neovim
 alias -s rs=neovim
 
+export VCPKG_ROOT=/home/alex/Projects/vcpkg
+export PATH=$VCPKG_ROOT:$PATH
 
 # Created by `pipx`
 export PATH="$PATH:/home/alex/.local/bin"
