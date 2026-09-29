@@ -25,8 +25,8 @@ font pango:DejaVu Sans Mono 8
 exec --no-startup-id xrandr --output HDMI-0 --mode 1920x1080 --rate 100
 
 # Specify decent mouse speed and acceleration.
-exec --no-startup-id xinput --set-prop 9 "libinput Accel Speed" -0.5
-exec --no-startup-id xinput --set-prop 9 "libinput Accel Profile Enabled" 0, 1, 0
+#exec --no-startup-id xinput --set-prop 9 "libinput Accel Speed" -0.5
+#exec --no-startup-id xinput --set-prop 9 "libinput Accel Profile Enabled" 0, 1, 0
 
 # Auto activate 'num lock' (requires numlockx package installed)
 exec --no-startup-id numlockx on

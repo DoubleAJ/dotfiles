@@ -21,7 +21,7 @@ alias c="clear"
 alias ls="ls --color=auto"
 alias grep="grep --color=auto"
 alias sudo='doas'
-alias sudoedit='doas lvim'
+alias sudoedit='doas nvim'
 
 # Safety aliases
 # do not delete / or prompt if deleting more than 3 files at a time #
