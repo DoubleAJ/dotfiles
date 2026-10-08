@@ -21,3 +21,5 @@
 !.config/rofi/*
 !.config/polybar
 !.config/polybar/*
+!.config/hypr/
+!.config/hypr/hyprland.lua
